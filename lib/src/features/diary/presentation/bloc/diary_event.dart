@@ -74,3 +74,12 @@ class EventFieldChanged extends DiaryEvent {
   List<Object?> get props => [text];
 }
 
+class DiaryFieldsCheck extends DiaryEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class SubmitDiary extends DiaryEvent {
+  @override
+  List<Object?> get props => [];
+}

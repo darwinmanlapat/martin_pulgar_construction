@@ -36,6 +36,10 @@ class CustomUnderlineTextField extends HookWidget {
           }
         });
 
+        if (inputText.isEmpty) {
+          textEditingController.text = '';
+        }
+
         return null;
       },
     );

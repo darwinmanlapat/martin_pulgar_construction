@@ -4,9 +4,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 
 class CustomDatePicker extends HookWidget {
-  const CustomDatePicker({super.key, required this.onDateSelected});
+  const CustomDatePicker({
+    super.key,
+    required this.onDateSelected,
+    required this.inputText,
+  });
 
   final void Function(String) onDateSelected;
+  final String inputText;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +84,12 @@ class CustomDatePicker extends HookWidget {
             focusColor.value = primaryTextColor;
           }
         });
+
+        if (inputText.isEmpty) {
+          textEditingController.text =
+              DateFormat('yyyy-MM-dd').format(DateTime.now());
+          selectedDate.value = DateTime.now();
+        }
 
         return null;
       },

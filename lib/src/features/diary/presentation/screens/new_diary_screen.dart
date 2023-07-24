@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:martin_pulgar_construction/src/enum/enum.dart';
+import 'package:martin_pulgar_construction/src/features/diary/dependency_injection/diary_repository_di.dart';
 import 'package:martin_pulgar_construction/src/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:martin_pulgar_construction/src/features/diary/presentation/widgets/diary_form_fields_container.dart';
 import 'package:martin_pulgar_construction/src/widgets/widgets.dart';
@@ -12,7 +13,7 @@ class NewDiaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => DiaryBloc(),
+      create: (context) => DiaryBloc(repository: diaryRepositoryDI),
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
@@ -114,11 +115,7 @@ class _SiteDiaryForm extends StatelessWidget {
           const SizedBox(height: 20),
           const _LinkDiaryToExistingEvent(),
           const SizedBox(height: 20),
-          CustomButton(
-            label: 'Next',
-            height: 55,
-            onPressed: () {},
-          ),
+          const _SubmitDiaryButton(),
         ],
       ),
     );
@@ -155,7 +152,7 @@ class _AddSiteDiaryPhotos extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            stateWatch.files.isEmpty
+            stateWatch.diary.files == null
                 ? const Center(
                     child: Text(
                       'No images picked.',
@@ -168,14 +165,14 @@ class _AddSiteDiaryPhotos extends HookWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: List.generate(
-                        stateWatch.files.length,
+                        stateWatch.diary.files!.length,
                         (index) {
                           return Stack(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Image.file(
-                                  stateWatch.files[index],
+                                  stateWatch.diary.files![index],
                                   width: 75,
                                   height: 75,
                                   fit: BoxFit.cover,
@@ -189,8 +186,10 @@ class _AddSiteDiaryPhotos extends HookWidget {
                                   width: 30,
                                   child: IconButton(
                                     icon: const Icon(Icons.cancel),
-                                    onPressed: () => diaryEvents
-                                        .add(RemoveDiaryPhoto(index)),
+                                    onPressed: () {
+                                      diaryEvents.add(RemoveDiaryPhoto(index));
+                                      diaryEvents.add(DiaryFieldsCheck());
+                                    },
                                     color: Colors.black,
                                   ),
                                 ),
@@ -205,7 +204,10 @@ class _AddSiteDiaryPhotos extends HookWidget {
             CustomButton(
               label: 'Add a photo',
               height: 55,
-              onPressed: () => diaryEvents.add(AddDiaryPhotos()),
+              onPressed: () {
+                diaryEvents.add(AddDiaryPhotos());
+                diaryEvents.add(DiaryFieldsCheck());
+              },
             ),
             const SizedBox(height: 20),
             Row(
@@ -246,14 +248,18 @@ class _AddSiteDiaryComment extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final diaryBloc = context.read<DiaryBloc>();
+    final diaryState = context.watch<DiaryBloc>().state.diary;
 
     return DiaryFormFieldsContainer(
       title: 'Comments',
       child: CustomUnderlineTextField(
         keyboardType: TextInputType.text,
         labelText: 'Comments',
-        onChanged: (String text) => diaryBloc.add(CommentFieldChanged(text)),
-        inputText: '',
+        onChanged: (String text) {
+          diaryBloc.add(CommentFieldChanged(text));
+          diaryBloc.add(DiaryFieldsCheck());
+        },
+        inputText: diaryState.comment ?? '',
       ),
     );
   }
@@ -265,13 +271,17 @@ class _AddSiteDiaryDetails extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final diaryBloc = context.read<DiaryBloc>();
+    final diaryState = context.watch<DiaryBloc>().state.diary;
     return DiaryFormFieldsContainer(
       title: 'Details',
       child: Column(
         children: [
           CustomDatePicker(
-            onDateSelected: (String value) =>
-                diaryBloc.add(DateFieldChanged(value)),
+            onDateSelected: (String value) {
+              diaryBloc.add(DateFieldChanged(value));
+              diaryBloc.add(DiaryFieldsCheck());
+            },
+            inputText: diaryState.date ?? '',
           ),
           const SizedBox(height: 10),
           CustomDropdownTextField(
@@ -281,8 +291,11 @@ class _AddSiteDiaryDetails extends HookWidget {
               'Area 2',
               'Area 3',
             ],
-            onItemSelected: (String text) =>
-                diaryBloc.add(AreaFieldChanged(text)),
+            onItemSelected: (String text) {
+              diaryBloc.add(AreaFieldChanged(text));
+              diaryBloc.add(DiaryFieldsCheck());
+            },
+            inputText: diaryState.area ?? '',
           ),
           const SizedBox(height: 10),
           CustomDropdownTextField(
@@ -298,15 +311,21 @@ class _AddSiteDiaryDetails extends HookWidget {
               'Category 8',
               'Category 9'
             ],
-            onItemSelected: (String text) =>
-                diaryBloc.add(CategoryFieldChanged(text)),
+            onItemSelected: (String text) {
+              diaryBloc.add(CategoryFieldChanged(text));
+              diaryBloc.add(DiaryFieldsCheck());
+            },
+            inputText: diaryState.category ?? '',
           ),
           const SizedBox(height: 10),
           CustomUnderlineTextField(
             keyboardType: TextInputType.text,
             labelText: 'Tags',
-            onChanged: (String text) => diaryBloc.add(TagsFieldChanged(text)),
-            inputText: '',
+            onChanged: (String text) {
+              diaryBloc.add(TagsFieldChanged(text));
+              diaryBloc.add(DiaryFieldsCheck());
+            },
+            inputText: diaryState.tags ?? '',
           ),
         ],
       ),
@@ -320,6 +339,7 @@ class _LinkDiaryToExistingEvent extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final diaryBloc = context.read<DiaryBloc>();
+    final diaryState = context.watch<DiaryBloc>().state.diary;
 
     return DiaryFormFieldsContainer(
       checkboxEnabled: true,
@@ -332,8 +352,30 @@ class _LinkDiaryToExistingEvent extends HookWidget {
           'Event 2',
           'Event 3',
         ],
-        onItemSelected: (String text) => diaryBloc.add(EventFieldChanged(text)),
+        onItemSelected: (String text) {
+          diaryBloc.add(EventFieldChanged(text));
+          diaryBloc.add(DiaryFieldsCheck());
+        },
+        inputText: diaryState.event ?? '',
       ),
+    );
+  }
+}
+
+class _SubmitDiaryButton extends HookWidget {
+  const _SubmitDiaryButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final diaryBloc = context.read<DiaryBloc>();
+    final diaryState = context.watch<DiaryBloc>().state;
+
+    return CustomButton(
+      label: 'Next',
+      height: 55,
+      onPressed: () => diaryBloc.add(SubmitDiary()),
+      isLoading: diaryState.isLoading,
+      isEmpty: diaryState.isDiaryFieldsIncomplete,
     );
   }
 }

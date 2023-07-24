@@ -7,6 +7,7 @@ class CustomDropdownTextField extends HookWidget {
     required this.dropdownItems,
     required this.onItemSelected,
     required this.labelText,
+    required this.inputText,
     this.isEnabled = true,
   });
 
@@ -14,6 +15,7 @@ class CustomDropdownTextField extends HookWidget {
   final void Function(String) onItemSelected;
   final String labelText;
   final bool? isEnabled;
+  final String inputText;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,10 @@ class CustomDropdownTextField extends HookWidget {
           focusColor.value = primaryTextColor;
         }
       });
+
+      if (inputText == '') {
+        selectedItem.value = null;
+      }
 
       return null;
     });
@@ -53,9 +59,9 @@ class CustomDropdownTextField extends HookWidget {
         );
       }).toList(),
       onChanged: isEnabled == true
-          ? (String? newValue) {
-              selectedItem.value = newValue;
-              onItemSelected(newValue!);
+          ? (String? value) {
+              selectedItem.value = value;
+              onItemSelected(value!);
             }
           : null,
       icon: Icon(

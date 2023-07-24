@@ -3,66 +3,47 @@ part of 'diary_bloc.dart';
 @immutable
 class DiaryState extends Equatable {
   const DiaryState({
-    this.files = const [],
-    this.comment,
-    this.date,
-    this.tags,
-    this.area,
-    this.category,
-    this.event,
+    this.diary = const Diary.initial(),
     this.status = Status.initial,
     this.statusMessage,
+    this.isLoading = false,
+    this.isDiaryFieldsIncomplete = true,
   });
 
-  final List<File> files;
-  final String? comment;
-  final String? date;
-  final String? tags;
-  final String? area;
-  final String? category;
-  final String? event;
+  final Diary diary;
   final Status status;
   final String? statusMessage;
+  final bool isLoading;
+  final bool isDiaryFieldsIncomplete;
 
   DiaryState copyWith({
-    List<File>? files,
-    String? comment,
-    String? date,
-    String? tags,
-    String? area,
-    String? category,
-    String? event,
+    Diary? diary,
     Status? status,
     String? statusMessage,
+    bool? isLoading,
+    bool? isDiaryFieldsIncomplete,
   }) {
     return DiaryState(
-      files: files ?? this.files,
-      comment: comment ?? this.comment,
-      date: date ?? this.date,
-      tags: tags ?? this.tags,
-      area: area ?? this.area,
-      category: category ?? this.category,
-      event: event ?? this.event,
+      diary: diary ?? this.diary,
       status: status ?? this.status,
       statusMessage: statusMessage ?? this.statusMessage,
+      isLoading: isLoading ?? this.isLoading,
+      isDiaryFieldsIncomplete:
+          isDiaryFieldsIncomplete ?? this.isDiaryFieldsIncomplete,
     );
   }
 
   @override
   String toString() {
-    return '''DiaryState { files: ${files.length}, comment: $comment, date: $date, tags: $tags, area: $area, category: $category, event: $event status: $status, statusMessage: $statusMessage }''';
+    return '''DiaryState { diary: $diary, status: $status, statusMessage: $statusMessage, isLoading: $isLoading, isDiaryFieldsIncomplete: $isDiaryFieldsIncomplete }''';
   }
 
   @override
   List<Object?> get props => [
-        files.length,
-        comment,
-        date,
-        tags,
-        area,
-        category,
-        event,
+        diary,
         status,
-        statusMessage
+        statusMessage,
+        isLoading,
+        isDiaryFieldsIncomplete,
       ];
 }
