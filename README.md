@@ -1,16 +1,57 @@
-# martin_pulgar_construction
+# **PRODUCT LISTING**
 
-A new Flutter project.
+## **Dependency**
 
-## Getting Started
+| **DEPENDENCY** | **VERSION** |
+|----------------|-------------|
+| Flutter        | 3.10.6      |
+| Dart           | 3.0.6       |
+| Xcode          | 14.2        |
+| Android Studio | 11.0+13     |
 
-This project is a starting point for a Flutter application.
+<br><hr><br>
 
-A few resources to get you started if this is your first Flutter project:
+## **Tech Stack**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**State Management:** <br>
+- bloc: ^8.1.2
+- flutter_bloc: ^8.1.2
+- flutter_hooks: ^0.18.6
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**HTTP Client:** <br>
+- dio: ^5.3.0 
+
+**Navigation:** <br>
+- beamer: ^1.5.6
+
+**Miscellaneous:** <br>
+- equatable: ^2.0.5
+- flutter_dotenv: ^5.1.0
+- file_picker: ^5.3.2
+- image_picker: ^0.8.4+4
+- intl: ^0.18.1
+- permission_handler: ^10.4.3
+
+
+<br><hr><br>
+
+## **Setting Up Dev Local Environment**
+
+- Install [Flutter](https://docs.flutter.dev/get-started/install), [Android Studio](https://developer.android.com/studio/install), and [Xcode](https://apps.apple.com/us/app/xcode/id497799835).
+
+- Clone the project from GitHub.
+
+- Create .env file for environment variables (https://docs.google.com/document/d/16KQ1X6hQ5IL5KEhvrVDH4K5OQv7mUccFPo-QYhKSiO4/edit?usp=sharing)
+
+- To run the app, run flutter run. If you are using Visual Studio Code, go to Run and Debug and choose the [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
+
+<br><hr><br>
+
+## **Test**
+
+- Run `flutter test`
+
+<br><hr><br>
+
+
+
